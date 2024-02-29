@@ -1,4 +1,4 @@
-﻿namespace BlogWebMVC.Models
+﻿namespace BlogWebsite.Models
 {
     public class Page
     {

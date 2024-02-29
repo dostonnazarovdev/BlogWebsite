@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BlogWebMVC.Models
+namespace BlogWebsite.Models
 {
     public class ApplicationUser:IdentityUser
     {
