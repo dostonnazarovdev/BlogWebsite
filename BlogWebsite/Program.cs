@@ -23,7 +23,10 @@ namespace BlogWebsite
               .AddDefaultTokenProviders();
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
             builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
-
+            builder.Services.ConfigureApplicationCookie(x =>
+            {
+                x.LoginPath = "/login";
+            });
 
 
             var app = builder.Build();
