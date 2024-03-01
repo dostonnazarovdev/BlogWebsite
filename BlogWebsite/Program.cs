@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using BlogWebsite.Data;
 using BlogWebsite.Models;
 using BlogWebsite.Utilites;
@@ -20,7 +22,7 @@ namespace BlogWebsite
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-
+            builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomRight; });
 
 
 
@@ -32,12 +34,13 @@ namespace BlogWebsite
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
+            app.UseNotyf();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
