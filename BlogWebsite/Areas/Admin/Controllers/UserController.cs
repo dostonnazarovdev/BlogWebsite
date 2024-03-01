@@ -31,7 +31,11 @@ namespace BlogWebsite.Areas.Admin.Controllers
         [HttpGet("Login")]
         public IActionResult Login()
         {
+            if (!HttpContext.User.Identity!.IsAuthenticated)
+            {
             return View(new LoginVM());
+            }
+            return RedirectToAction("Index", "User", new {Areas="Admin"});
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginVM vm)
@@ -59,5 +63,12 @@ namespace BlogWebsite.Areas.Admin.Controllers
             return RedirectToAction("Index", "User", new { area = "Admin" });
         }
 
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            _signInManager.SignOutAsync();
+            _notifySerivce.Success("You are logged out successfull");
+            return RedirectToAction("Index", "Home", new {area=""});
+        }
     }
 }
