@@ -35,7 +35,7 @@ namespace BlogWebsite.Areas.Admin.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Registor(RegisterVM vm)
+        public async Task<IActionResult> Register(RegisterVM vm)
         {
             if (!ModelState.IsValid)
             {
