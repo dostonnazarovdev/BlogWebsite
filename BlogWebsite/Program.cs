@@ -18,13 +18,14 @@ namespace BlogWebsite
             builder.Services.AddControllersWithViews();
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(opitions => opitions.UseSqlServer(connectionString));
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole> ()
+                /*(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
-            })
+            })*/
               .AddEntityFrameworkStores<ApplicationDbContext>()
               .AddDefaultTokenProviders();
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
