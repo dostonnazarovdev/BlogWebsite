@@ -33,6 +33,7 @@ namespace BlogWebsite
             builder.Services.ConfigureApplicationCookie(x =>
             {
                 x.LoginPath = "/login";
+                x.AccessDeniedPath= "/AccessDenied";
             });
 
 

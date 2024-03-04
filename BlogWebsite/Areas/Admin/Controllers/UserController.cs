@@ -58,7 +58,7 @@ namespace BlogWebsite.Areas.Admin.Controllers
             {
                 return View(new LoginVM());
             }
-            return RedirectToAction("Index", "User", new { Areas = "Admin" });
+            return RedirectToAction("Index", "Post", new { Areas = "Admin" });
         }
 
 
@@ -85,12 +85,13 @@ namespace BlogWebsite.Areas.Admin.Controllers
 
             await _signInManager.PasswordSignInAsync(vm.Username, vm.Password, vm.RememberMe, true);
             _notifySerivce.Success("Login successful");
-            return RedirectToAction("Index", "User", new { area = "Admin" });
+            return RedirectToAction("Index", "Post", new { area = "Admin" });
         }
 
 
         // Logout section
         [HttpPost]
+        [Authorize]
         public IActionResult Logout()
         {
             _signInManager.SignOutAsync();
@@ -197,5 +198,13 @@ namespace BlogWebsite.Areas.Admin.Controllers
             return View(vm);
         }
 
+
+        // Logout section
+        [HttpGet("AccessDenied")]
+        [Authorize]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
