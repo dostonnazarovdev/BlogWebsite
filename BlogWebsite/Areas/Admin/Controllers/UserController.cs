@@ -15,7 +15,7 @@ namespace BlogWebsite.Areas.Admin.Controllers
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly INotyfService _notifySerivce;
+        private INotyfService _notifySerivce { get; }
         public UserController(UserManager<ApplicationUser> userManager,
                               SignInManager<ApplicationUser> signInManager,
                               INotyfService notyfService)
