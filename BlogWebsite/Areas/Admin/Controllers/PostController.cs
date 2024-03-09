@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using BlogWebsite.Data;
 using BlogWebsite.Models;
+using BlogWebsite.Utilites;
 using BlogWebsite.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -28,9 +29,32 @@ namespace BlogWebsite.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
         }
-        public IActionResult Index()
+
+        [HttpGet]
+        public async  Task<IActionResult> Index()
         {
-            return View();
+            var  listOfPosts = new List<Post>();
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+            if (loggedInUserRole[0] == WebsiteRoles.WebsiteAdmin)
+            {
+                listOfPosts=await _context.Posts!.Include(x=>x.ApplicationUser).ToListAsync();
+            }
+            else
+            {
+                listOfPosts = await _context.Posts!.Include(x => x.ApplicationUser).Where(a=>a.ApplicationUser!.Id==loggedInUser!.Id).ToListAsync();
+            }
+
+            var listOfPostsVM = listOfPosts.Select(x => new PostVM()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                CreateDate = x.CreatedDate,
+                PotoUrl = x.PhotoUrl,
+                AuthorName = x.ApplicationUser!.FirstName + " " + x.ApplicationUser.LastName
+            }); 
+
+            return View(listOfPostsVM);
         }
 
         [HttpGet]
@@ -71,6 +95,75 @@ namespace BlogWebsite.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+            if (loggedInUserRole[0]==WebsiteRoles.WebsiteAdmin || loggedInUser?.Id == post?.ApplicationUserId)
+            {
+                _context.Posts!.Remove(post!);
+                await _context.SaveChangesAsync();
+                _notifySerivce.Success("Post delete successfully");
+            }
+            return RedirectToAction("Index", "Post", new { area = "Admin" });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(x => x.Id == id);
+           
+            if (post==null)
+            {
+                _notifySerivce.Error("Post not found");
+                return View();
+            }
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+            if (loggedInUserRole[0] != WebsiteRoles.WebsiteAdmin && loggedInUser!.Id!=post.ApplicationUserId)
+            {
+                _notifySerivce.Error("You are not authorized");
+                return RedirectToAction("index");
+            }
+            var vm = new CreatePostVM()
+            {
+                Id = post.Id,
+                ShortDescription = post.ShortDescription,
+                ApplicationUserId = post.ApplicationUserId,
+                Description = post.Description,
+                PhotoUrl = post.PhotoUrl
+            };
+
+
+           return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(CreatePostVM vm)
+        {
+            if(!ModelState.IsValid) { return View(vm); }
+            var post = await _context.Posts!.FirstOrDefaultAsync(x=>x.Id == vm.Id);
+            if(post==null)
+            {
+                _notifySerivce.Error("Post not found");
+                return View();
+            }
+
+            post.Title = vm.Title;
+            post.ShortDescription= vm.ShortDescription;
+            post.Description = vm.Description;
+
+            if (vm.Photo != null)
+            {
+                post.PhotoUrl = UploadImage(vm.Photo);
+            }
+            await _context.SaveChangesAsync();
+            _notifySerivce.Success("Post update successfully");
+            return RedirectToAction("Index","Post", new {area="Admin"});
+        }
         public string UploadImage(IFormFile file)
         {
             var uniqueFileName = "";

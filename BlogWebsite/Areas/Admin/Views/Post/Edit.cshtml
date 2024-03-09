@@ -4,8 +4,9 @@
 
 @{
 
-    ViewData["Title"] = "Create Post";
+    ViewData["Title"] = "Edit Post";
 }
+
 <div class="container-fluid">
     <a class="btn btn-primary" asp-action="Index" asp-controller="Post">Go Back</a>
     <div class="card">
@@ -14,9 +15,10 @@
         </div>
 
         <div class="card-body">
-            <form asp-action="Create" asp-controller="Post" asp-area="Admin" enctype="multipart/form-data">
-            
-               <div class="row">
+            <form asp-action="Edit" asp-controller="Post" asp-area="Admin" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="PhotoUrl" />
+                <div class="row">
 
                     <div class="col-9 mb-2">
                         <div class="mb-2">
@@ -32,7 +34,7 @@
 
                         <div class="mb-2">
                             <label>Description</label>
-                            <textarea asp-for="Description" class="form-control" rows="8" ></textarea>
+                            <textarea asp-for="Description" class="form-control" rows="8"></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
@@ -40,26 +42,35 @@
                     <div class="col-3">
 
                         <div class="mb-2">
-                            <img src="~/photos/youtubelogo_image.jpg" class="img-fluid" id="photo"/>
+                            @{
+                                @if (Model.PhotoUrl == null)
+                                {
+                                    <img src="~/photos/youtubelogo_image.jpg" class="img-fluid" id="photo" />
+                                }
+
+                                {
+                                    <img src="~/photos/@Model.PhotoUrl" class="img-fluid" id="photo" />
+                                }
+                            }
                         </div>
 
                         <div class="mb-2">
                             <label>Photo</label>
-                            <input type="file" asp-for="Photo" class="custom-file"/>
+                            <input type="file" asp-for="Photo" class="custom-file" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
 
-               </div>
+                </div>
                 <div class="mb-2">
-                    <button type="sumit" class="btn btn-primary w-100">Save</button>
+                    <button type="submit" class="btn btn-primary w-100">Save</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
- @section Scripts{
+@section Scripts {
     <script>
         $(".custom-file").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
@@ -67,5 +78,4 @@
             document.getElementById('photo').src = window.URL.createObjectURL(this.files[0])
         });
     </script>
- }
-     
+}
