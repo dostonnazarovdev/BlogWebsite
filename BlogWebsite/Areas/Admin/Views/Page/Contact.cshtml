@@ -1,20 +1,18 @@
-﻿@model BlogWebsite.ViewModels.CreatePostVM
-
-
+﻿@model BlogWebsite.ViewModels.PageVM
 @{
 
-    ViewData["Title"] = "Edit Post";
+    ViewData["Title"] = "Contact Page";
 }
 
 <div class="container-fluid">
     <a class="btn btn-primary" asp-action="Index" asp-controller="Post">Go Back</a>
     <div class="card">
         <div class="card-header bg-primary">
-            <h4 class="card-title text-white">New Post</h4>
+            <h4 class="card-title text-white">Contact Page</h4>
         </div>
 
         <div class="card-body">
-            <form asp-action="Edit" asp-controller="Post" asp-area="Admin" enctype="multipart/form-data">
+            <form asp-action="Contact" asp-controller="Page" asp-area="Admin" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="PhotoUrl" />
                 <div class="row">
@@ -78,3 +76,4 @@
         });
     </script>
 }
+
