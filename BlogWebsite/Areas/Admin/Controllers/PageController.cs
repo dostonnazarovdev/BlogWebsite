@@ -29,7 +29,7 @@ namespace BlogWebsite.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> About ()
         {
-            var aboutPage = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "About");
+            var aboutPage = await _context.Pages!.FirstOrDefaultAsync(x => x.Slug == "about");
             var vm = new PageVM()
             {
                 Id = aboutPage.Id,
