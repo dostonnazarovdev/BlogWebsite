@@ -15,7 +15,7 @@ namespace BlogWebsite
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<ApplicationDbContext>(opitions => opitions.UseSqlServer(connectionString));
             builder.Services.AddIdentity<ApplicationUser, IdentityRole> ()

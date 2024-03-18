@@ -1,5 +1,8 @@
-﻿using BlogWebsite.Models;
+﻿using BlogWebsite.Data;
+using BlogWebsite.Models;
+using BlogWebsite.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace BlogWebsite.Controllers
@@ -7,15 +10,25 @@ namespace BlogWebsite.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
+
+
 
         public IActionResult Index()
         {
-            return View();
+            var vm = new HomeVM();
+            var setting = _context.Settings!.ToList();
+            vm.Title = setting[0].Title;
+            vm.ShortDescription = setting[0].ShortDescription;
+            vm.PhotoUrl = setting[0].PhotoUrl;
+            vm.Posts = _context.Posts!.Include(x => x.ApplicationUser).ToList();
+            return View(vm);
         }
 
         public IActionResult Privacy()
